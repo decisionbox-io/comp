@@ -1,0 +1,61 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    network_mode: host
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: comp
+    volumes:
+      - comp_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '5'
+  migrator:
+    network_mode: host
+  seeder:
+    network_mode: host
+  app:
+    network_mode: host
+  portal:
+    network_mode: host
+    environment:
+      PORT: "3002"
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - comp_redisdata:/data
+    restart: unless-stopped
+  srh:
+    image: hiett/serverless-redis-http:latest
+    environment:
+      SRH_MODE: env
+      SRH_TOKEN: ${SRH_TOKEN}
+      SRH_CONNECTION_STRING: redis://redis:6379
+    ports:
+      - "127.0.0.1:8079:80"
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  litellm:
+    image: ghcr.io/berriai/litellm:main-stable
+    network_mode: host
+    command: ["--config", "/app/config.yaml", "--host", "127.0.0.1", "--port", "4000"]
+    environment:
+      LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY}
+    volumes:
+      - ./decisionbox/litellm-config.yaml:/app/config.yaml:ro
+    restart: unless-stopped
+
+volumes:
+  comp_pgdata:
+  comp_redisdata:

@@ -1,0 +1,18 @@
+model_list:
+  - model_name: text-embedding-3-small
+    litellm_params:
+      model: bedrock/us.cohere.embed-v4:0
+      aws_region_name: us-east-1
+  - model_name: text-embedding-3-large
+    litellm_params:
+      model: bedrock/us.cohere.embed-v4:0
+      aws_region_name: us-east-1
+  - model_name: "*"
+    litellm_params:
+      model: bedrock/us.anthropic.claude-opus-4-8
+      aws_region_name: us-east-1
+      additional_drop_params: ["reasoning_effort"]
+litellm_settings:
+  drop_params: true
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
