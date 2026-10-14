@@ -21,7 +21,7 @@ services:
       target: migrator
     env_file:
       - packages/db/.env
-    command: sh -lc "bunx prisma generate --schema=node_modules/@trycompai/db/dist/schema.prisma && bun packages/db/prisma/seed/seed.js"
+    command: sh -lc "bun scripts/generate-prisma-client-js.js && bun prisma/seed/seed.ts"
     logging: *default-logging
   app:
     build:
@@ -30,6 +30,8 @@ services:
       target: app
       args:
         NEXT_PUBLIC_BETTER_AUTH_URL: ${BETTER_AUTH_URL}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+        NEXT_PUBLIC_PORTAL_URL: ${BETTER_AUTH_URL_PORTAL}
     ports:
       - '3000:3000'
     env_file:
@@ -49,6 +51,7 @@ services:
       target: portal
       args:
         NEXT_PUBLIC_BETTER_AUTH_URL: ${BETTER_AUTH_URL_PORTAL}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
     ports:
       - '3002:3000'
     env_file:
