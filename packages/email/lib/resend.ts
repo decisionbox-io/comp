@@ -1,7 +1,14 @@
 import { randomUUID } from 'node:crypto';
 import { Resend } from 'resend';
+import { createSesResend } from './ses-shim';
 
-export const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+// EMAIL_PROVIDER=ses routes all mail through AWS SES (see ses-shim.ts).
+export const resend: Resend | null =
+  process.env.EMAIL_PROVIDER === "ses"
+    ? (createSesResend() as unknown as Resend)
+    : process.env.RESEND_API_KEY
+      ? new Resend(process.env.RESEND_API_KEY)
+      : null;
 
 function maskEmail(value: string): string {
   const [name = '', domain = ''] = value.toLowerCase().split('@');
