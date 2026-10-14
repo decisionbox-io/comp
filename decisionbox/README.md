@@ -21,7 +21,7 @@ Set in `apps/api/.env`, `apps/app/.env` and `apps/portal/.env`:
 ```
 EMAIL_PROVIDER=ses
 SES_REGION=us-east-1
-RESEND_FROM_DEFAULT="Comp AI <poc@decisionbox.io>"
-RESEND_FROM_SYSTEM="Comp AI <poc@decisionbox.io>"
+RESEND_FROM_DEFAULT="Comp AI <security@decisionbox.io>"
+RESEND_FROM_SYSTEM="Comp AI <security@decisionbox.io>"
 ```
 Credentials come from the default AWS chain (EC2 instance role). The role needs `ses:SendEmail` on `identity/*` and `configuration-set/*`. While the account is in the SES sandbox, recipients must be verified identities.
