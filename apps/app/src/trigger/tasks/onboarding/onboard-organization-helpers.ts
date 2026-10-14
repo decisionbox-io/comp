@@ -1,4 +1,4 @@
-import { createGatewayProvider } from '@ai-sdk/gateway';
+import { createOpenAI } from '@ai-sdk/openai';
 import {
   Departments,
   FrameworkEditorFramework,
@@ -15,9 +15,7 @@ import { db } from '@db/server';
 import { logger, metadata, tasks } from '@trigger.dev/sdk';
 import { generateObject, jsonSchema } from 'ai';
 
-const gateway = createGatewayProvider({
-  baseURL: process.env.AI_GATEWAY_BASE_URL,
-});
+const gateway = ((p) => (id: string) => p.chat(id))(createOpenAI({ baseURL: process.env.OPENAI_BASE_URL, apiKey: process.env.OPENAI_API_KEY }));
 const ONBOARDING_MODEL = 'google/gemini-3-flash' as const;
 import axios from 'axios';
 import { z } from 'zod';

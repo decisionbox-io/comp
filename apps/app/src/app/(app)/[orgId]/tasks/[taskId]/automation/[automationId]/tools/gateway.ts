@@ -1,12 +1,11 @@
-import { createGatewayProvider } from '@ai-sdk/gateway';
+import { createOpenAI } from '@ai-sdk/openai';
 import type { OpenAIResponsesProviderOptions } from '@ai-sdk/openai';
 import type { LanguageModelV3 } from '@ai-sdk/provider';
 import type { JSONValue } from 'ai';
 
 export async function getAvailableModels() {
-  const gateway = gatewayInstance();
-  const response = await gateway.getAvailableModels();
-  return response.models.map((model) => ({ id: model.id, name: model.name }));
+  // Self-hosted: all models are served by the Bedrock-backed LiteLLM proxy.
+  return [{ id: 'anthropic/claude-opus-4-8', name: 'Claude Opus 4.8 (Bedrock)' }];
 }
 
 export interface ModelOptions {
@@ -35,7 +34,5 @@ export function getModelOptions(
 }
 
 function gatewayInstance() {
-  return createGatewayProvider({
-    baseURL: process.env.AI_GATEWAY_BASE_URL,
-  });
+  return ((p) => (id: string) => p.chat(id))(createOpenAI({ baseURL: process.env.OPENAI_BASE_URL, apiKey: process.env.OPENAI_API_KEY }));
 }

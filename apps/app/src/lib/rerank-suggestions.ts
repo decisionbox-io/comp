@@ -1,4 +1,4 @@
-import { createGatewayProvider } from '@ai-sdk/gateway';
+import { createOpenAI } from '@ai-sdk/openai';
 import { generateObject, jsonSchema } from 'ai';
 
 /**
@@ -39,9 +39,7 @@ export interface RerankedCandidate {
   rerankScore: number;
 }
 
-const gateway = createGatewayProvider({
-  baseURL: process.env.AI_GATEWAY_BASE_URL,
-});
+const gateway = ((p) => (id: string) => p.chat(id))(createOpenAI({ baseURL: process.env.OPENAI_BASE_URL, apiKey: process.env.OPENAI_API_KEY }));
 
 /**
  * GA slug. Never pin a `-preview` alias here: the gateway retires it once the model

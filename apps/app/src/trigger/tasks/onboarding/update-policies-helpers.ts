@@ -1,4 +1,4 @@
-import { createGatewayProvider } from '@ai-sdk/gateway';
+import { createOpenAI } from '@ai-sdk/openai';
 import { db, FrameworkEditorFramework, FrameworkEditorPolicyTemplate, type Policy } from '@db/server';
 import type { JSONContent } from '@tiptap/react';
 import { logger } from '@trigger.dev/sdk';
@@ -6,9 +6,7 @@ import { generateObject } from 'ai';
 import { z } from 'zod';
 import { processTemplate } from './process-policy-template';
 
-const gateway = createGatewayProvider({
-  baseURL: process.env.AI_GATEWAY_BASE_URL,
-});
+const gateway = ((p) => (id: string) => p.chat(id))(createOpenAI({ baseURL: process.env.OPENAI_BASE_URL, apiKey: process.env.OPENAI_API_KEY }));
 
 const CUE_LINE_PATTERN =
   /^(State that|Clarify that|Add a |Include a |Specify |List |Note that|Require that|Describe |Define )/;
